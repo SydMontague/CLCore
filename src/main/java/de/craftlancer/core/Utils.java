@@ -1,6 +1,7 @@
 package de.craftlancer.core;
 
 import java.awt.Point;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -313,5 +314,13 @@ public class Utils
         long s = time - h * 3600 - min * 60;
         
         return h + "h " + min + "min " + s + "s";
+    }
+
+    public static String[] removeFirstElement(String[] args)
+    {
+        if(args == null || args.length <= 1)
+            return new String[0];
+
+        return Arrays.copyOfRange(args, 1, args.length);
     }
 }

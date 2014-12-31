@@ -17,6 +17,7 @@ import de.craftlancer.core.Utils;
 // TODO externalize common code between CommandHandler and SubCommandHandler
 public abstract class CommandHandler implements TabExecutor
 {
+    private static String HELP_COMMAND = "help";
     private Map<String, SubCommand> commands = new HashMap<String, SubCommand>();
     private Plugin plugin;
     
@@ -29,21 +30,20 @@ public abstract class CommandHandler implements TabExecutor
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
     {
         args = parseArgumentStrings(args);
+        SubCommand command = commands.get(args.length == 0 || !commands.containsKey(args[0]) ? HELP_COMMAND : args[0]);
+        args = Utils.removeFirstElement(args);
         
-        String message = null;
-        
-        if (args.length == 0 || !commands.containsKey(args[0]))
-            if (commands.containsKey("help"))
-                message = commands.get("help").execute(sender, cmd, label, args);
-            else
-                return false;
-        else
-            message = commands.get(args[0]).execute(sender, cmd, label, args);
+        String message = command != null ? command.onCommand(sender, cmd, label, args) : execute(sender, cmd, label, args);
         
         if (message != null)
             sender.sendMessage(message);
         
         return true;
+    }
+    
+    protected String execute(CommandSender sender, Command cmd, String label, String[] args)
+    {
+        return null;
     }
     
     @Override
@@ -60,10 +60,10 @@ public abstract class CommandHandler implements TabExecutor
                         l.remove(l);
                 return l;
             default:
-                if (!commands.containsKey(args[0]))
-                    return null;
-                else
-                    return commands.get(args[0]).onTabComplete(sender, args);
+                SubCommand command = commands.get(args[0]);
+                args = Utils.removeFirstElement(args);
+                
+                return command == null ? null : command.onTabComplete(sender, args);
         }
     }
     
@@ -74,9 +74,6 @@ public abstract class CommandHandler implements TabExecutor
         Validate.isTrue(!commands.containsKey(name), "Command " + name + " is already defined");
         for (String a : alias)
             Validate.isTrue(!commands.containsKey(a), "Command " + a + " is already defined");
-        
-        if (command instanceof SubCommandHandler)
-            Validate.isTrue(((SubCommandHandler) command).getDepth() == 1, "The depth of a SubCommandHandler must be the depth of the previous Handler + 1!");
         
         commands.put(name, command);
         for (String s : alias)

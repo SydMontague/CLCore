@@ -4,6 +4,7 @@
   <groupId>de.craftlancer</groupId>
   <artifactId>clcore</artifactId>
   <name>CLCore</name>
+  <version>5-SNAPSHOT</version>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
@@ -60,5 +61,4 @@
       </plugin>
     </plugins>
   </build>
-  <version>4-SNAPSHOT</version>
 </project>

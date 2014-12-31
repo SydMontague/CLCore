@@ -14,53 +14,46 @@ import de.craftlancer.core.Utils;
 public abstract class SubCommandHandler extends SubCommand
 {
     private Map<String, SubCommand> commands = new HashMap<String, SubCommand>();
-    private int depth;
     
-    public SubCommandHandler(String permission, Plugin plugin, boolean console, int depth)
+    public SubCommandHandler(String permission, Plugin plugin, boolean console)
     {
         super(permission, plugin, console);
-        Validate.isTrue(depth >= 1, "SubCommandHandler depth can't be smaller than 0!");
-        this.depth = depth;
+    }
+    
+    @Override
+    protected String onCommand(CommandSender sender, Command cmd, String label, String[] args)
+    {        
+        SubCommand command = commands.get(args[0]);
+        args = Utils.removeFirstElement(args);
+        
+        return command != null ? command.onCommand(sender, cmd, label, args) : execute(sender, cmd, label, args);
     }
     
     @Override
     protected String execute(CommandSender sender, Command cmd, String label, String[] args)
     {
-        if (args.length <= getDepth() || !commands.containsKey(args[getDepth()]))
-            if (commands.containsKey("help"))
-                return commands.get("help").execute(sender, cmd, label, args);
-            else
-            {
-                help(sender);
-                return null;
-            }
-        else
-            return commands.get(args[getDepth()]).execute(sender, cmd, label, args);
-    }
-    
-    protected int getDepth()
-    {
-        return depth;
+        help(sender);
+        return null;
     }
     
     @Override
     public List<String> onTabComplete(CommandSender sender, String[] args)
     {
-        switch (args.length - depth)
+        switch (args.length)
         {
             case 0:
                 return null;
             case 1:
-                List<String> l = Utils.getMatches(args[args.length - 1], commands.keySet());
+                List<String> l = Utils.getMatches(args[0], commands.keySet());
                 for (String str : l)
                     if (!sender.hasPermission(commands.get(str).getPermission()))
                         l.remove(l);
                 return l;
             default:
-                if (!commands.containsKey(args[args.length - 1]))
-                    return null;
-                else
-                    return commands.get(args[args.length - 1]).onTabComplete(sender, args);
+                SubCommand command = commands.get(args[0]);
+                args = Utils.removeFirstElement(args);
+                
+                return command == null ? null : command.onTabComplete(sender, args);
         }
     }
     
@@ -74,9 +67,6 @@ public abstract class SubCommandHandler extends SubCommand
         Validate.isTrue(!commands.containsKey(name), "Command " + name + " is already defined");
         for (String a : alias)
             Validate.isTrue(!commands.containsKey(a), "Command " + a + " is already defined");
-        
-        if (command instanceof SubCommandHandler)
-            Validate.isTrue(((SubCommandHandler) command).getDepth() == getDepth() + 1, "The depth of a SubCommandHandler must be the depth of the previous Handler + 1!");
         
         commands.put(name, command);
         for (String s : alias)
