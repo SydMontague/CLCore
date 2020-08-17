@@ -36,7 +36,7 @@ public class CustomItemRegistry {
         YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
         config.getValues(false).forEach((a, b) -> items.put(a, (ItemStack) b));
         
-        plugin.getCommand("registerItem").setExecutor(new CustomItemCommandHandler(plugin, this));
+        plugin.getCommand("registerItem").setExecutor(new CustomItemCommandHandler(plugin, "registerItem",this));
     }
     
     public void save() {

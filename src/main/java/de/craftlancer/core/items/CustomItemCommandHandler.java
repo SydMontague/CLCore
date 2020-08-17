@@ -5,13 +5,13 @@ import de.craftlancer.core.command.CommandHandler;
 
 public class CustomItemCommandHandler extends CommandHandler {
 
-    public CustomItemCommandHandler(CLCore plugin, CustomItemRegistry registry) {
-        super(plugin);
+    public CustomItemCommandHandler(CLCore plugin, String label, CustomItemRegistry registry) {
+        super(plugin, label);
         
-        registerSubCommand("add", new CustomItemAddCommand(plugin, registry));
-        registerSubCommand("remove", new CustomItemRemoveCommand(plugin, registry));
-        registerSubCommand("list", new CustomItemListCommand(plugin, registry));
-        registerSubCommand("give", new CustomItemGiveCommand(plugin, registry));
+        registerSubCommand("add", new CustomItemAddCommand(plugin, getLabel() + "add", this, registry));
+        registerSubCommand("remove", new CustomItemRemoveCommand(plugin, getLabel() + "remove", this, registry));
+        registerSubCommand("list", new CustomItemListCommand(plugin, getLabel() + "list", this, registry));
+        registerSubCommand("give", new CustomItemGiveCommand(plugin, getLabel() + "give", this, registry));
     }
     
 }

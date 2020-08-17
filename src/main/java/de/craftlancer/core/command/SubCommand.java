@@ -12,6 +12,19 @@ public abstract class SubCommand {
     private String permission = "";
     protected Plugin plugin;
     private boolean console;
+    private String label;
+    private CommandHandler commandHandler;
+    
+    /**
+     * Required constructor for automatically generated help component
+     */
+    public SubCommand(String permission, Plugin plugin, boolean console, CommandHandler handler, String label) {
+        this.permission = permission;
+        this.plugin = plugin;
+        this.console = console;
+        this.label = label;
+        this.commandHandler = handler;
+    }
     
     public SubCommand(String permission, Plugin plugin, boolean console) {
         this.permission = permission;
@@ -36,6 +49,19 @@ public abstract class SubCommand {
     
     public String getPermission() {
         return permission;
+    }
+    
+    public String getLabel() {
+        return label + " ";
+    }
+    
+    /**
+     * Sets the label in the help component. To be used in the constructor of the child subcommand.
+     * @param description the description to be used in the help component (use null for no description)
+     */
+    public void sendLabelsToCommandHandler(String description) {
+        CommandHandler.HelpLabel helpLabel = new CommandHandler.HelpLabel(label, permission, description);
+        commandHandler.addHelpLabel(helpLabel);
     }
     
     /**

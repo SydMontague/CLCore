@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import de.craftlancer.core.command.CommandHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -18,9 +19,11 @@ public class CustomItemGiveCommand extends SubCommand {
 
     private CustomItemRegistry registry;
     
-    public CustomItemGiveCommand(CLCore plugin, CustomItemRegistry registry) {
-        super("clcore.itemregistry.give", plugin, true);
+    public CustomItemGiveCommand(CLCore plugin, String label, CommandHandler handler, CustomItemRegistry registry) {
+        super("clcore.itemregistry.give", plugin, true, handler, label);
         this.registry = registry;
+    
+        sendLabelsToCommandHandler("I can have a description, or I can set it to null for no description!");
     }
     
     @Override

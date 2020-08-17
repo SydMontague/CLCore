@@ -23,6 +23,16 @@ public abstract class SubCommandHandler extends SubCommand
         this.depth = depth;
     }
     
+    /**
+     * Required constructor for automatically generated help component
+     */
+    public SubCommandHandler(String permission, CommandHandler handler, String label, Plugin plugin, boolean console, int depth)
+    {
+        super(permission, plugin, console, handler, label);
+        Validate.isTrue(depth >= 1, "SubCommandHandler depth can't be smaller than 0!");
+        this.depth = depth;
+    }
+    
     @Override
     protected String execute(CommandSender sender, Command cmd, String label, String[] args)
     {

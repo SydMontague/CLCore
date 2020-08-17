@@ -2,6 +2,7 @@ package de.craftlancer.core.items;
 
 import java.util.List;
 
+import de.craftlancer.core.command.CommandHandler;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
@@ -13,9 +14,11 @@ public class CustomItemRemoveCommand extends SubCommand {
     
     private CustomItemRegistry registry;
     
-    public CustomItemRemoveCommand(CLCore plugin, CustomItemRegistry registry) {
-        super("clcore.itemregistry.remove", plugin, true);
+    public CustomItemRemoveCommand(CLCore plugin, String label, CommandHandler handler, CustomItemRegistry registry) {
+        super("clcore.itemregistry.remove", plugin, true, handler, label);
         this.registry = registry;
+    
+        sendLabelsToCommandHandler(null);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package de.craftlancer.core.items;
 
+import de.craftlancer.core.command.CommandHandler;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
@@ -16,9 +17,11 @@ public class CustomItemListCommand extends SubCommand {
 
     private CustomItemRegistry registry;
     
-    public CustomItemListCommand(CLCore plugin, CustomItemRegistry registry) {
-        super("clcore.itemregistry.list", plugin, true);
+    public CustomItemListCommand(CLCore plugin, String label, CommandHandler handler, CustomItemRegistry registry) {
+        super("clcore.itemregistry.list", plugin, true, handler, label);
         this.registry = registry;
+    
+        sendLabelsToCommandHandler(null);
     }
     
     @Override
