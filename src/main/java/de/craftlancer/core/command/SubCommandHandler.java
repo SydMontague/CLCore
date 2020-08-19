@@ -1,6 +1,5 @@
 package de.craftlancer.core.command;
 
-import de.craftlancer.core.LambdaRunnable;
 import org.apache.commons.lang.Validate;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -22,8 +21,6 @@ public abstract class SubCommandHandler extends SubCommand {
         super(permission, plugin, console);
         Validate.isTrue(depth >= 1, "SubCommandHandler depth can't be smaller than 0!");
         this.depth = depth;
-        
-        new LambdaRunnable(this::registerSubCommands).runTaskLater(plugin, 4);
     }
     
     @Override
@@ -64,7 +61,24 @@ public abstract class SubCommandHandler extends SubCommand {
     @Override
     public abstract void help(CommandSender sender);
     
-    public abstract void registerSubCommands();
+    public void setHelpLabels() {
+        getCommands().forEach((name, command) -> {
+            if (command instanceof SubCommandHandler) {
+                Validate.isTrue(((SubCommandHandler) command).getDepth() == getDepth() + 1, "The depth of a SubCommandHandler must be the depth of the previous Handler + 1!");
+                helpLabelManagers.forEach(helpLabelManager -> {
+                    helpLabelManager.addLabel(name);
+                    ((SubCommandHandler) command).addHelpLabelManager(helpLabelManager);
+                    ((SubCommandHandler) command).setHelpLabels();
+                });
+            } else {
+                helpLabelManagers.forEach(helpLabelManager -> {
+                    CommandHandler.HelpLabel label = command.getHelpLabel();
+                    label.setLabel(helpLabelManager.getLabel() + " " + name);
+                    helpLabelManager.addHelpLabel(label);
+                });
+            }
+        });
+    }
     
     public void registerSubCommand(String name, SubCommand command, String... alias) {
         Validate.notNull(command, "SubCommand can't be null!");
@@ -72,16 +86,6 @@ public abstract class SubCommandHandler extends SubCommand {
         Validate.isTrue(!commands.containsKey(name), "Command " + name + " is already defined");
         for (String a : alias)
             Validate.isTrue(!commands.containsKey(a), "Command " + a + " is already defined");
-        
-        if (command instanceof SubCommandHandler) {
-            Validate.isTrue(((SubCommandHandler) command).getDepth() == getDepth() + 1, "The depth of a SubCommandHandler must be the depth of the previous Handler + 1!");
-            helpLabelManagers.forEach(helpLabelManager -> {
-                helpLabelManager.addLabel(name);
-                ((SubCommandHandler) command).addHelpLabelManager(helpLabelManager);
-            });
-        } else {
-            helpLabelManagers.forEach(helpLabelManager -> command.addHelpLabel(helpLabelManager, " " + name));
-        }
         
         commands.put(name, command);
         for (String s : alias)
@@ -94,5 +98,15 @@ public abstract class SubCommandHandler extends SubCommand {
     
     public void addHelpLabelManager(CommandHandler.HelpLabelManager manager) {
         helpLabelManagers.add(manager);
+    }
+    
+    @Override
+    public String[] getArgs() {
+        return new String[0];
+    }
+    
+    @Override
+    public String getDescription() {
+        return null;
     }
 }

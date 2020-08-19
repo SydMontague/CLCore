@@ -18,6 +18,16 @@ public class CustomItemAddCommand extends SubCommand {
     }
     
     @Override
+    public String[] getArgs() {
+        return new String[0];
+    }
+    
+    @Override
+    public String getDescription() {
+        return null;
+    }
+    
+    @Override
     protected String execute(CommandSender sender, Command cmd, String label, String[] args) {
         if (!checkSender(sender))
             return "You can't run this command.";

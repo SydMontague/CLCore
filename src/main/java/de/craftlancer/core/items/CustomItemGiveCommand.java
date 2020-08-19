@@ -21,8 +21,16 @@ public class CustomItemGiveCommand extends SubCommand {
         super("clcore.itemregistry.give", plugin, true);
         this.registry = registry;
         
-        setArguments("[player]", "[itemName]");
-        setDescription("Give a player a custom item registry item");
+    }
+    
+    @Override
+    public String[] getArgs() {
+        return new String[]{"[player]", "[itemName]"};
+    }
+    
+    @Override
+    public String getDescription() {
+        return "Give a player a custom item registry item";
     }
     
     @Override

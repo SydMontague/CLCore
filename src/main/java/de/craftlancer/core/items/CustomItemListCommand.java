@@ -18,9 +18,16 @@ public class CustomItemListCommand extends SubCommand {
     public CustomItemListCommand(CLCore plugin, CustomItemRegistry registry) {
         super("clcore.itemregistry.list", plugin, true);
         this.registry = registry;
-        
-        setArguments("<page>", "[exampleArg]");
-        setDescription("List items");
+    }
+    
+    @Override
+    public String[] getArgs() {
+        return new String[]{"<page>", "[exampleArg]"};
+    }
+    
+    @Override
+    public String getDescription() {
+        return "List Items";
     }
     
     @Override

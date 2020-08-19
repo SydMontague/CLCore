@@ -5,7 +5,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
@@ -13,8 +12,6 @@ public abstract class SubCommand {
     private String permission = "";
     protected Plugin plugin;
     private boolean console;
-    private String description;
-    private String[] args;
     
     public SubCommand(String permission, Plugin plugin, boolean console) {
         this.permission = permission;
@@ -41,24 +38,20 @@ public abstract class SubCommand {
         return permission;
     }
     
-    public void setDescription(@Nullable String description) {
-        this.description = description;
-    }
-    
-    public void addHelpLabel(CommandHandler.HelpLabelManager manager, String subCommandLabel) {
-        CommandHandler.HelpLabel helpLabel = new CommandHandler.HelpLabel(manager.getLabel() + " " + subCommandLabel, description, permission, args);
-        manager.addHelpLabel(helpLabel);
-    }
-    
     /**
      * Used to show required/optional arguments in the help component.
      *
-     * @param arguments Each argument in the command, in the order used.
-     *                  Use brackets [] around an argument to specify a required argument
-     *                  Use arrows <> around an argument to specify an optional argument
+     * @return An array of strings to be set as the arguments.
      */
-    public void setArguments(String... arguments) {
-        this.args = arguments;
+    public abstract String[] getArgs();
+    
+    /**
+     * @return The description
+     */
+    public abstract String getDescription();
+    
+    public CommandHandler.HelpLabel getHelpLabel() {
+        return new CommandHandler.HelpLabel(getDescription(), permission, getArgs());
     }
     
     /**
