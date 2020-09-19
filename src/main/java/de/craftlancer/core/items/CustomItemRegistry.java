@@ -1,5 +1,14 @@
 package de.craftlancer.core.items;
 
+import de.craftlancer.core.CLCore;
+import de.craftlancer.core.LambdaRunnable;
+import org.apache.commons.lang.Validate;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
@@ -8,17 +17,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import org.apache.commons.lang.Validate;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
-
-import de.craftlancer.core.CLCore;
-import de.craftlancer.core.LambdaRunnable;
 
 /**
  * Register custom items under a unique name to be used by other plugins.
@@ -36,18 +34,17 @@ public class CustomItemRegistry {
         YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
         config.getValues(false).forEach((a, b) -> items.put(a, (ItemStack) b));
         
-        plugin.getCommand("registerItem").setExecutor(new CustomItemCommandHandler(plugin, this));
+        plugin.getCommand("registerItem").setExecutor(new CustomItemCommandHandler(plugin, "registerItem", this));
     }
     
     public void save() {
         YamlConfiguration config = new YamlConfiguration();
         items.forEach(config::set);
-
+        
         BukkitRunnable saveTask = new LambdaRunnable(() -> {
             try {
                 config.save(file);
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 plugin.getLogger().log(Level.SEVERE, "Error while saving ItemRegistry: ", e);
             }
         });
@@ -59,10 +56,10 @@ public class CustomItemRegistry {
     }
     
     /**
-     * Adds an {@link ItemStack} under the given key to the registry. 
+     * Adds an {@link ItemStack} under the given key to the registry.
      * If the key has been in use previously the old value will be overwritten.
-     * 
-     * @param key the key to be used
+     *
+     * @param key  the key to be used
      * @param item the item to be associated with the key
      * @return the item previously associated with that key or null
      */
@@ -75,7 +72,7 @@ public class CustomItemRegistry {
     
     /**
      * Removes a key->item association from the registry.
-     * 
+     *
      * @param key the key to remove
      * @return true when an association has been successfully removed, false otherwise
      */
@@ -85,7 +82,7 @@ public class CustomItemRegistry {
     
     /**
      * Gets the item associated with the given key, or null if non is found.
-     * 
+     *
      * @param key the key to look for
      * @return the item associated with the given key, or null if non is found
      */
@@ -96,7 +93,7 @@ public class CustomItemRegistry {
     
     /**
      * Gets whether an item is associated with the given key.
-     * 
+     *
      * @param key the key to look for
      * @return true when an item is associated with the key, false otherwise
      */
@@ -106,14 +103,14 @@ public class CustomItemRegistry {
     
     /**
      * Gets an immutable view of the key->ItemStack map.
-     * 
+     *
      * @return an immutable view of the key->ItemStack map
      */
     @Nonnull
     public Map<String, ItemStack> getItems() {
         return Collections.unmodifiableMap(items);
     }
-
+    
     public Collection<String> getKeys() {
         return Collections.unmodifiableSet(items.keySet());
     }

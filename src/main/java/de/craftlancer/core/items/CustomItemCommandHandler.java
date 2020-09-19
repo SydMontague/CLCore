@@ -4,8 +4,8 @@ import de.craftlancer.core.CLCore;
 import de.craftlancer.core.command.CommandHandler;
 
 public class CustomItemCommandHandler extends CommandHandler {
-
-    public CustomItemCommandHandler(CLCore plugin, CustomItemRegistry registry) {
+    
+    public CustomItemCommandHandler(CLCore plugin, String name, CustomItemRegistry registry) {
         super(plugin);
         
         registerSubCommand("add", new CustomItemAddCommand(plugin, registry));
@@ -13,5 +13,4 @@ public class CustomItemCommandHandler extends CommandHandler {
         registerSubCommand("list", new CustomItemListCommand(plugin, registry));
         registerSubCommand("give", new CustomItemGiveCommand(plugin, registry));
     }
-    
 }
